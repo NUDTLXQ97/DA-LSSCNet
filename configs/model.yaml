@@ -1,0 +1,24 @@
+# Inference-only configuration matching the final paper model.
+model:
+  in_channels: 3
+  out_channels: 3
+  channels: 32
+  num_blocks: 4
+  window_size: 16
+  num_bands: 8
+  spectral_strength: 0.25
+  spectral_strength_max: 0.35
+  spectral_overlap: 0.5
+  residual_bound: 0.25
+  use_severity_controller: true
+  use_output_gate: true
+  output_gate_init: 0.3
+  use_prior: true
+  use_spectral: true
+  use_spatial: true
+  use_gate: true
+  use_checkpoint: false
+  severity_input_size: 96
+  severity_base_channels: 24
+  severity_embedding_dim: 128
+  severity_dropout: 0.1

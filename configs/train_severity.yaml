@@ -1,0 +1,75 @@
+output_dir: ./experiments/severity
+model:
+  in_channels: 3
+  out_channels: 3
+  channels: 32
+  num_blocks: 4
+  window_size: 16
+  num_bands: 8
+  spectral_strength: 0.25
+  spectral_strength_max: 0.35
+  spectral_overlap: 0.5
+  residual_bound: 0.25
+  use_severity_controller: true
+  use_output_gate: true
+  output_gate_init: 0.3
+  use_prior: true
+  use_spectral: true
+  use_spatial: true
+  use_gate: true
+  use_checkpoint: false
+  severity_input_size: 96
+  severity_base_channels: 24
+  severity_embedding_dim: 128
+  severity_dropout: 0.1
+severity_data:
+  train_turb_dir: ./data_p2s_mixed_v2/train/turb
+  val_turb_dir: ./data_p2s_mixed_v2/val/turb
+  train_pair_csv: ./metadata/train_pair_groups.csv
+  val_pair_csv: ./metadata/val_pair_groups.csv
+  augment: true
+  shared_photometric_prob: 0.5
+severity_train:
+  epochs: 30
+  batch_size: 16
+  samples_per_epoch: 18000
+  num_workers: 8
+  eval_batch_size: 128
+  eval_num_workers: 4
+  precision: bf16
+  lr: 0.0002
+  min_lr: 1.0e-05
+  weight_decay: 0.0001
+  grad_clip: 1.0
+  early_stop_patience: 10
+  stop_when_passed: false
+  pair_sampling_multipliers:
+    identity<mild: 1.0
+    identity<medium: 1.0
+    identity<strong: 1.0
+    mild<medium: 2.0
+    mild<strong: 1.25
+    medium<strong: 1.5
+  prefetch_factor: 3
+  eval_prefetch_factor: 2
+  allow_tf32: true
+  cudnn_benchmark: true
+severity_loss:
+  ordinal_weight: 0.5
+  class_weight: 0.5
+  rank_weight: 4.0
+  anchor_weight: 0.5
+  gap_weight: 1.0
+  base_margin: 0.08
+  pair_loss_weights:
+    identity<mild: 1.0
+    identity<medium: 1.0
+    identity<strong: 1.0
+    mild<medium: 4.0
+    mild<strong: 1.5
+    medium<strong: 2.0
+  anchor_targets:
+    identity: 0.05
+    mild: 0.25
+    medium: 0.55
+    strong: 0.85

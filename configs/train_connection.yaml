@@ -1,0 +1,68 @@
+output_dir: ./experiments/connection
+model:
+  in_channels: 3
+  out_channels: 3
+  channels: 32
+  num_blocks: 4
+  window_size: 16
+  num_bands: 8
+  spectral_strength: 0.25
+  spectral_strength_max: 0.35
+  spectral_overlap: 0.5
+  residual_bound: 0.25
+  use_severity_controller: true
+  use_output_gate: true
+  output_gate_init: 0.3
+  use_prior: true
+  use_spectral: true
+  use_spatial: true
+  use_gate: true
+  use_checkpoint: false
+  severity_input_size: 96
+  severity_base_channels: 24
+  severity_embedding_dim: 128
+  severity_dropout: 0.1
+data:
+  train_turb_dir: ./data_p2s_mixed_v2/train/turb
+  train_gt_dir: ./data_p2s_mixed_v2/train/gt
+  val_turb_dir: ./data_p2s_mixed_v2/val/turb
+  val_gt_dir: ./data_p2s_mixed_v2/val/gt
+  patch_size: 256
+  augment: true
+  extra_val_sets:
+    strong_p2s:
+      turb_dir: ./data_p2s_fast/val/turb
+      gt_dir: ./data_p2s_fast/val/gt
+    heatchamber_calib:
+      turb_dir: ./heatchamber_split_v2/calib/Input
+      gt_dir: ./heatchamber_split_v2/calib/gt
+train:
+  epochs: 3
+  batch_size: 4
+  accum_iter: 2
+  samples_per_epoch: 16000
+  num_workers: 8
+  precision: bf16
+  lr: 1.0e-05
+  min_lr: 2.0e-06
+  weight_decay: 0.0001
+  grad_clip: 1.0
+  save_val_images: 4
+  trainable_modules:
+  - severity_controller
+  type_sampling_ratio:
+    identity: 0.15
+    mild: 0.4
+    medium: 0.3
+    strong: 0.15
+  prefetch_factor: 3
+  allow_tf32: true
+  cudnn_benchmark: true
+loss:
+  lambda_rec: 1.0
+  lambda_grad: 0.02
+  lambda_freq: 0.005
+  lambda_range: 0.001
+  lambda_identity: 0.1
+  lambda_gate_identity: 0.005
+  frequency_window: 16
